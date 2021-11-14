@@ -1,0 +1,57 @@
+# Comments are like python
+# This notes are from the video: https://www.youtube.com/watch?v=cdLNKUoMc6c
+
+name: "Felipe"
+occupation: 'Engineer'
+age: 26
+
+hobbies:
+  - music
+  - theater
+  - coding
+
+fav_directors: ["Almodovar", "Wes Anderson", "Tarantino"]
+
+friends:
+  - name: "Steph"
+    age: 22
+  - {name: "Steph", age: "22"}
+  -
+    name: "Joe"
+    age: 23
+
+# > Renders as a single line ( Puts '\n' in the end )
+description: >
+  This is a text.
+  I can format it in different ways.
+
+another_text:
+  You can test.
+  On your own.
+
+# | Prserves format (indentation)
+signature: |
+  Mike
+  Giraffe Academy
+  email - giraffeacademy@gmail.com
+
+
+# If you change the myvalue
+myvalue: &anchor 59
+# It automatically changes test
+test: *anchor
+
+
+# Anchoring key value pair
+
+base: &base
+  var1: value1
+
+foo:
+  <<: *base
+  var2: value2
+
+
+# Casting
+variable1: !!float 40
+variable2: !!str 25.5

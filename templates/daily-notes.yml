@@ -1,0 +1,44 @@
+# Format date and time:
+# https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
+# 
+# %a    - Weekday as locale’s abbreviated name.                 [Sun, Mon, …, Sat (en_US); So, Mo, …, Sa (de_DE)]
+# %d    - Day of the month as a zero-padded decimal number.     [01, 02, …, 31]
+# %b    - Month as locale’s abbreviated name.                   [Jan, Feb, …, Dec (en_US); Jan, Feb, …, Dez (de_DE)]
+# %B    - Month as locale’s full name.                          [January, February, …, December (en_US); Januar, Februar, …, Dezember (de_DE)]
+# ...
+# %U    - Week number of the year (Sunday as the first day of the week) as a zero padded decimal number.
+# All days in a new year preceding the first Sunday are considered to be in week 0.  [ 00, 01, …, 53 ]
+
+main:
+  header: |
+    <!-- .................................. -->
+    <!-- .......... {%b} - {%Y} ........... -->
+    <!-- .................................. -->
+
+  footer: |
+    <!-- .............. END ............... -->
+
+week:
+  header: |
+    Week {%U}📌
+    ====================
+  
+  parser: ====================
+  parserOffset: -1
+
+day:
+  header: "### {weekDayEmoji} {%a} {%d}/{%m}:\n\n"
+  
+  parser: "###"
+  parserOffset: 0
+
+emojis:
+  mon: &mon ⏰
+  tue: &tue 🌳
+  wed: &wed 🐦
+  thu: &thu 📚
+  fri: &fri 🌈
+  sat: &sat 🌙
+  sun: &sun "☀️ "
+
+  week: [*mon, *tue, *wed, *thu, *fri, *sat, *sun]
