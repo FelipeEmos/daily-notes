@@ -15,7 +15,13 @@
 #
 #
 # TODO
+# - Add support for regex patterns on parser
 # - Refactor into multiple files
+# - Add support to enter vim with special function
+#
+# LONG TERM
+# - Make this script return a more general return (lineNum, fileToEdit)
+#   and use it on another shell script to open / edit the file.
 
 from typing import Optional, Callable, List, Tuple
 import sys
@@ -206,6 +212,7 @@ class DocumentParser:
         lastBlockStart: Optional[int] = None
 
         for index, line in enumerate(lines):
+            # Change to re.findall(parserString, lineToParse)
             isWeekHeader = (
                 line.find(self.documentFormatter.weekParserString()) != -1)
             isDayHeader = (
@@ -360,11 +367,12 @@ DEFAULT_TEMPLATE_CONFIG_FILE = "templates/daily-notes.yml"
 def main():
     rootDir = getRootDirFromArgs()
     moveToRootDir(rootDir)
-    attemptCreateConfigFile()
+
+    fileExists = attemptCreateConfigFile()
+    if(not fileExists): return
     documentFormatter = DocumentFormatter.getFromYaml(DEFAULT_CONFIG_FILE)
 
     currentTime = Datetime.now()
-
     timeTests = [
         currentTime,
         # Datetime(2021, 11, 15),
@@ -379,7 +387,7 @@ def main():
             blocks, time, documentFormatter)
         lineToEdit = FileManager.writeFileAndGetEditPoint(noteFilePath, newBlocks, blockIndexToEdit)
         
-        input("Added entry for time [{}], let's edit?".format(time))
+        # input("Added entry for time [{}], let's edit?".format(time))
         os.system("${EDITOR:-vim} +" + str(lineToEdit) + " " + noteFilePath)
 
     return
@@ -401,12 +409,22 @@ def moveToRootDir(rootDir: str):
 def checkValidArguments():
     return len(sys.argv) >= 2
 
-def attemptCreateConfigFile():
+def attemptCreateConfigFile() -> bool:
     dirname = os.path.dirname(__file__)
     templateConfigFile = os.path.join(dirname, DEFAULT_TEMPLATE_CONFIG_FILE)
 
     if (not os.path.isfile(DEFAULT_CONFIG_FILE)):
+        question = "Hey, there's no '{}' file on the location you chose.".format(DEFAULT_CONFIG_FILE)
+        question += "\nMaybe it's the first time you're using this program on such location and that's fine." 
+        question += "\n"
+        question += "\nDo you want to create a new '{}' file based on the default template? (Y/n): ".format(DEFAULT_CONFIG_FILE)
+        ans = input(question)
+
+        if(not ans.lower() in ["y", "yes", "s", "sim"]):
+            return False
+
         shutil.copyfile(templateConfigFile, DEFAULT_CONFIG_FILE)
+    return True
 
 def attemptCreateYearDir(year: int):
     if(not os.path.isdir(str(year))):
